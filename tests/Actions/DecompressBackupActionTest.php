@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
 use Wnx\LaravelBackupRestore\Exceptions\DecompressionFailed;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 it('decompresses zip backup file without password', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-no-encryption.zip',
         connection: 'mysql',
@@ -26,7 +26,7 @@ it('decompresses zip backup file without password', function () {
 });
 
 it('decompresses zip backup file that needs password do decrypt', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-encrypted.zip',
         connection: 'mysql',
@@ -43,7 +43,7 @@ it('decompresses zip backup file that needs password do decrypt', function () {
 });
 
 it('throws DecompressionFailed exception', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/not-a-zip-file.zip',
         connection: 'mysql',
@@ -57,7 +57,7 @@ it('throws DecompressionFailed exception', function () {
     ->expectExceptionMessage('Not a zip archive. (ZipArchive::ER_NOZIP)');
 
 it('throws exception if backup password is wrong', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-encrypted.zip',
         connection: 'mysql',

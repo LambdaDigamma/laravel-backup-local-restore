@@ -6,6 +6,7 @@ namespace Wnx\LaravelBackupRestore\Actions;
 
 use Illuminate\Support\Facades\Storage;
 use Wnx\LaravelBackupRestore\Exceptions\DecompressionFailed;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 use Wnx\LaravelBackupRestore\PendingRestore;
 use ZipArchive;
 

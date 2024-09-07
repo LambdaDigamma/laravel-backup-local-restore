@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Prompts\Prompt;
-use Wnx\LaravelBackupRestore\Actions\CheckDependenciesAction;
 use Wnx\LaravelBackupRestore\Actions\CleanupLocalBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
 use Wnx\LaravelBackupRestore\Actions\ImportDumpAction;
-use Wnx\LaravelBackupRestore\Actions\ResetDatabaseAction;
+use Wnx\LaravelBackupRestore\Actions\ResetStorageAction;
 use Wnx\LaravelBackupRestore\Exceptions\CannotCreateDbImporter;
 use Wnx\LaravelBackupRestore\Exceptions\CliNotFound;
 use Wnx\LaravelBackupRestore\Exceptions\DecompressionFailed;
@@ -23,8 +21,8 @@ use Wnx\LaravelBackupRestore\Exceptions\NoBackupsFound;
 use Wnx\LaravelBackupRestore\Exceptions\NoDatabaseDumpsFound;
 use Wnx\LaravelBackupRestore\HealthChecks\HealthCheck;
 use Wnx\LaravelBackupRestore\HealthChecks\Result;
-use Wnx\LaravelBackupRestore\PendingRestore;
-
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
+use Wnx\LaravelBackupRestore\PendingStorageRestore;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
@@ -32,16 +30,15 @@ use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\warning;
 
-class RestoreCommand extends Command
+class RestoreStorageCommand extends Command
 {
-    public $signature = 'backup:restore
+    public $signature = 'backup:restore-disk
                         {--disk= : The disk from where to restore the backup from. Defaults to the first disk in config/backup.php.}
                         {--backup= : The backup to restore. Defaults to the latest backup.}
-                        {--connection= : The database connection to restore the backup to. Defaults to the first connection in config/backup.php.}
                         {--password= : The password to decrypt the backup.}
                         {--reset : Drop all tables in the database before restoring the backup.}';
 
-    public $description = 'Restore a database backup dump from a given disk to a database connection.';
+    public $description = 'Restore a local disk content from a given disk.';
 
     /**
      * @throws NoDatabaseDumpsFound
@@ -52,10 +49,9 @@ class RestoreCommand extends Command
      * @throws CliNotFound
      */
     public function handle(
-        CheckDependenciesAction $checkDependenciesAction,
         DownloadBackupAction $downloadBackupAction,
         DecompressBackupAction $decompressBackupAction,
-        ResetDatabaseAction $resetDatabaseAction,
+        ResetStorageAction $resetDatabaseAction,
         ImportDumpAction $importDumpAction,
         CleanupLocalBackupAction $cleanupLocalBackupAction
     ): int {
@@ -65,12 +61,9 @@ class RestoreCommand extends Command
 
         $connection = $this->option('connection') ?? config('backup.backup.source.databases')[0];
 
-        // Dependencies-check is currently disabled. Custom binary paths are currently not supported by the Action.
-        // $checkDependenciesAction->execute($connection);
-
         $diskToRestoreFrom = $this->getDestinationDiskToRestoreFrom();
 
-        $pendingRestore = PendingRestore::make(
+        $pendingRestore = PendingStorageRestore::make(
             disk: $diskToRestoreFrom,
             backup: $this->getBackupToRestore($diskToRestoreFrom),
             connection: $connection,
@@ -88,14 +81,17 @@ class RestoreCommand extends Command
 
         if ($this->option('reset')) {
             $resetDatabaseAction->execute($pendingRestore);
+            $resetDatabaseAction->execute($pendingRestore);
         }
-
-        $importDumpAction->execute($pendingRestore);
+        //
+        //        $importDumpAction->execute($pendingRestore);
+        //
 
         info('Cleaning up …');
         $cleanupLocalBackupAction->execute($pendingRestore);
 
-        return $this->runHealthChecks($pendingRestore);
+        return 0;
+//        return $this->runHealthChecks($pendingRestore);
     }
 
     private function getDestinationDiskToRestoreFrom(): string
@@ -167,7 +163,7 @@ class RestoreCommand extends Command
         return $password;
     }
 
-    private function runHealthChecks(PendingRestore $pendingRestore): int
+    private function runHealthChecks(PendingDatabaseRestore $pendingRestore): int
     {
         $failedResults = collect(config('backup-restore.health-checks'))
             ->map(fn ($check) => $check::new())
@@ -185,23 +181,33 @@ class RestoreCommand extends Command
         return self::SUCCESS;
     }
 
-    private function confirmRestoreProcess(PendingRestore $pendingRestore): bool
+    private function confirmRestoreProcess(PendingStorageRestore $pendingRestore): bool
     {
-        $connectionConfig = config("database.connections.{$pendingRestore->connection}");
-        $connectionInformationForConfirmation = collect([
-            'Database' => Arr::get($connectionConfig, 'database'),
-            'Host' => Arr::get($connectionConfig, 'host'),
-            'username' => Arr::get($connectionConfig, 'username'),
-        ])->filter()->map(fn ($value, $key) => "{$key}: {$value}")->implode(', ');
 
         return confirm(
             label: sprintf(
-                'Proceed to restore "%s" using the "%s" database connection. (%s)',
-                $pendingRestore->backup,
-                $pendingRestore->connection,
-                $connectionInformationForConfirmation
+                'Proceed to restore disk "%s" using the "%s" disk from backup.',
+                'media',
+                'media'
             ),
             default: true
         );
+
+        //        $connectionConfig = config("database.connections.{$pendingRestore->connection}");
+        //        $connectionInformationForConfirmation = collect([
+        //            'Database' => Arr::get($connectionConfig, 'database'),
+        //            'Host' => Arr::get($connectionConfig, 'host'),
+        //            'username' => Arr::get($connectionConfig, 'username'),
+        //        ])->filter()->map(fn ($value, $key) => "{$key}: {$value}")->implode(', ');
+        //
+        //        return confirm(
+        //            label: sprintf(
+        //                'Proceed to restore "%s" using the "%s" database connection. (%s)',
+        //                $pendingRestore->backup,
+        //                $pendingRestore->connection,
+        //                $connectionInformationForConfirmation
+        //            ),
+        //            default: true
+        //        );
     }
 }

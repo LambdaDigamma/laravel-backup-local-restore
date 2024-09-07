@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\HealthChecks;
 
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 abstract class HealthCheck
 {
-    abstract public function run(PendingRestore $pendingRestore): Result;
+    abstract public function run(PendingDatabaseRestore $pendingRestore): Result;
 
     public static function new(): self
     {

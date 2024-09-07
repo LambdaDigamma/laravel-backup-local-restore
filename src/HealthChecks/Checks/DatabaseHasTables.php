@@ -7,11 +7,11 @@ namespace Wnx\LaravelBackupRestore\HealthChecks\Checks;
 use Illuminate\Support\Facades\DB;
 use Wnx\LaravelBackupRestore\HealthChecks\HealthCheck;
 use Wnx\LaravelBackupRestore\HealthChecks\Result;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 class DatabaseHasTables extends HealthCheck
 {
-    public function run(PendingRestore $pendingRestore): Result
+    public function run(PendingDatabaseRestore $pendingRestore): Result
     {
         $result = Result::make($this);
 

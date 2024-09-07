@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Actions;
 
 use Illuminate\Support\Facades\Storage;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
+use Wnx\LaravelBackupRestore\PendingRestore;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\spin;
 

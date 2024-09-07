@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Events;
 
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 class DatabaseRestored
 {
-    public function __construct(readonly public PendingRestore $pendingRestore) {}
+    public function __construct(readonly public PendingDatabaseRestore $pendingRestore) {}
 }
