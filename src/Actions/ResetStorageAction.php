@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Actions;
 
 use Wnx\LaravelBackupRestore\Storage\PendingStorageRestore;
+
 use function Laravel\Prompts\info;
 
 class ResetStorageAction
@@ -13,11 +14,10 @@ class ResetStorageAction
     {
         info('Reset directory …');
 
-
-//        DB::connection($pendingRestore->connection)
-//            ->getSchemaBuilder()
-//            ->dropAllTables();
-//
-//        event(new DatabaseReset($pendingRestore));
+        //        DB::connection($pendingRestore->connection)
+        //            ->getSchemaBuilder()
+        //            ->dropAllTables();
+        //
+        //        event(new DatabaseReset($pendingRestore));
     }
 }

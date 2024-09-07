@@ -16,13 +16,9 @@ use Wnx\LaravelBackupRestore\Exceptions\DecompressionFailed;
 use Wnx\LaravelBackupRestore\Exceptions\ImportFailed;
 use Wnx\LaravelBackupRestore\Exceptions\NoBackupsFound;
 use Wnx\LaravelBackupRestore\Exceptions\NoDatabaseDumpsFound;
-use Wnx\LaravelBackupRestore\HealthChecks\HealthCheck;
-use Wnx\LaravelBackupRestore\HealthChecks\Result;
-use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 use Wnx\LaravelBackupRestore\Storage\PendingStorageRestore;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\warning;
 
