@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Actions;
 
-use Wnx\LaravelBackupRestore\PendingStorageRestore;
+use Wnx\LaravelBackupRestore\Storage\PendingStorageRestore;
 use function Laravel\Prompts\info;
 
 class ResetStorageAction
@@ -12,6 +12,7 @@ class ResetStorageAction
     public function execute(PendingStorageRestore $pendingRestore)
     {
         info('Reset directory …');
+
 
 //        DB::connection($pendingRestore->connection)
 //            ->getSchemaBuilder()

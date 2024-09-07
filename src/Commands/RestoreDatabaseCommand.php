@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Laravel\Prompts\Prompt;
 use Wnx\LaravelBackupRestore\Actions\CheckDependenciesAction;
 use Wnx\LaravelBackupRestore\Actions\CleanupLocalBackupAction;
@@ -28,11 +25,9 @@ use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
-use function Laravel\Prompts\password;
-use function Laravel\Prompts\select;
 use function Laravel\Prompts\warning;
 
-class RestoreDatabaseCommand extends Command
+class RestoreDatabaseCommand extends BaseRestoreCommand
 {
     public $signature = 'backup:restore
                         {--disk= : The disk from where to restore the backup from. Defaults to the first disk in config/backup.php.}
@@ -96,75 +91,6 @@ class RestoreDatabaseCommand extends Command
         $cleanupLocalBackupAction->execute($pendingRestore);
 
         return $this->runHealthChecks($pendingRestore);
-    }
-
-    private function getDestinationDiskToRestoreFrom(): string
-    {
-        // Use disk from --disk option if provided
-        if ($this->option('disk')) {
-            return $this->option('disk');
-        }
-
-        $availableDestinations = config('backup.backup.destination.disks');
-
-        // If there is only one disk configured, use it
-        if (count($availableDestinations) === 1) {
-            return $availableDestinations[0];
-        }
-
-        // Ask user to choose a disk
-        return select(
-            'From which disk should the backup be restored?',
-            $availableDestinations,
-            head($availableDestinations)
-        );
-    }
-
-    /**
-     * @throws NoBackupsFound
-     */
-    private function getBackupToRestore(string $disk): string
-    {
-        $name = config('backup.backup.name');
-
-        info("Fetch list of backups from $disk …");
-        $listOfBackups = collect(Storage::disk($disk)->allFiles($name))
-            ->filter(fn ($file) => Str::endsWith($file, '.zip'));
-
-        if ($listOfBackups->count() === 0) {
-            error("No backups found on {$disk}.");
-            throw NoBackupsFound::onDisk($disk);
-        }
-
-        if ($this->option('backup') === 'latest') {
-            return $listOfBackups->last();
-        }
-
-        if ($this->option('backup')) {
-            return $this->option('backup');
-        }
-
-        return select(
-            label: 'Which backup should be restored?',
-            options: $listOfBackups->mapWithKeys(fn ($backup) => [$backup => $backup]),
-            default: $listOfBackups->last(),
-            scroll: 10
-        );
-    }
-
-    private function getPassword(): ?string
-    {
-        if ($this->option('password')) {
-            $password = $this->option('password');
-        } elseif ($this->option('no-interaction')) {
-            $password = config('backup.backup.password');
-        } elseif (confirm('Use encryption password from config?', true)) {
-            $password = config('backup.backup.password');
-        } else {
-            $password = password('What is the password to decrypt the backup? (leave empty if not encrypted)');
-        }
-
-        return $password;
     }
 
     private function runHealthChecks(PendingDatabaseRestore $pendingRestore): int

@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Storage;
 
 use Illuminate\Support\Str;
-use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 use Wnx\LaravelBackupRestore\PendingRestore;
 
 class PendingStorageRestore extends PendingRestore
 {
-    public static function make(...$attributes): PendingDatabaseRestore
+    public static function make(...$attributes): PendingStorageRestore
     {
         $restoreName = now()->format('Y-m-d-h-i-s').'-'.Str::uuid();
 
