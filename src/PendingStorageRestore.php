@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Wnx\LaravelBackupRestore\Storage;
+namespace Wnx\LaravelBackupRestore;
 
 use Illuminate\Support\Str;
-use Wnx\LaravelBackupRestore\PendingRestore;
 
 class PendingStorageRestore extends PendingRestore
 {

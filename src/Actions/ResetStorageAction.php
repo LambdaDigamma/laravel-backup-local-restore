@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Actions;
 
-use Wnx\LaravelBackupRestore\Storage\PendingStorageRestore;
-
+use Wnx\LaravelBackupRestore\PendingStorageRestore;
 use function Laravel\Prompts\info;
 
 class ResetStorageAction

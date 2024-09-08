@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Commands;
 
+use Illuminate\Support\Facades\Storage;
 use Laravel\Prompts\Prompt;
 use Wnx\LaravelBackupRestore\Actions\CleanupLocalBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
 use Wnx\LaravelBackupRestore\Actions\ImportDumpAction;
+use Wnx\LaravelBackupRestore\Actions\MoveFilesAction;
 use Wnx\LaravelBackupRestore\Actions\ResetStorageAction;
 use Wnx\LaravelBackupRestore\Exceptions\CannotCreateDbImporter;
 use Wnx\LaravelBackupRestore\Exceptions\CliNotFound;
@@ -16,7 +18,7 @@ use Wnx\LaravelBackupRestore\Exceptions\DecompressionFailed;
 use Wnx\LaravelBackupRestore\Exceptions\ImportFailed;
 use Wnx\LaravelBackupRestore\Exceptions\NoBackupsFound;
 use Wnx\LaravelBackupRestore\Exceptions\NoDatabaseDumpsFound;
-use Wnx\LaravelBackupRestore\Storage\PendingStorageRestore;
+use Wnx\LaravelBackupRestore\PendingStorageRestore;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
@@ -28,7 +30,9 @@ class RestoreStorageCommand extends BaseRestoreCommand
                         {--disk= : The disk from where to restore the backup from. Defaults to the first disk in config/backup.php.}
                         {--backup= : The backup to restore. Defaults to the latest backup.}
                         {--password= : The password to decrypt the backup.}
-                        {--reset : Drop all tables in the database before restoring the backup.}';
+                        {--reset : Drop all tables in the database before restoring the backup.}
+                        {--root= : The root to restore the backup to.}
+                        {--path= : The path to restore the backup to.}';
 
     public $description = 'Restore a local disk content from a given disk.';
 
@@ -44,7 +48,7 @@ class RestoreStorageCommand extends BaseRestoreCommand
         DownloadBackupAction $downloadBackupAction,
         DecompressBackupAction $decompressBackupAction,
         ResetStorageAction $resetStorageAction,
-        ImportDumpAction $importDumpAction,
+        MoveFilesAction $moveFilesAction,
         CleanupLocalBackupAction $cleanupLocalBackupAction
     ): int {
         Prompt::fallbackWhen(
@@ -71,15 +75,15 @@ class RestoreStorageCommand extends BaseRestoreCommand
         if ($this->option('reset')) {
             $resetStorageAction->execute($pendingRestore);
         }
-        //
-        //        $importDumpAction->execute($pendingRestore);
-        //
+
+        $root = $this->option('root');
+        $path = $this->option('path') ?? 'app/public';
+        $moveFilesAction->execute($pendingRestore, $root, $path);
 
         info('Cleaning up …');
         $cleanupLocalBackupAction->execute($pendingRestore);
 
         return 0;
-        //        return $this->runHealthChecks($pendingRestore);
     }
 
     private function confirmRestoreProcess(PendingStorageRestore $pendingRestore): bool
@@ -93,22 +97,5 @@ class RestoreStorageCommand extends BaseRestoreCommand
             ),
             default: true
         );
-
-        //        $connectionConfig = config("database.connections.{$pendingRestore->connection}");
-        //        $connectionInformationForConfirmation = collect([
-        //            'Database' => Arr::get($connectionConfig, 'database'),
-        //            'Host' => Arr::get($connectionConfig, 'host'),
-        //            'username' => Arr::get($connectionConfig, 'username'),
-        //        ])->filter()->map(fn ($value, $key) => "{$key}: {$value}")->implode(', ');
-        //
-        //        return confirm(
-        //            label: sprintf(
-        //                'Proceed to restore "%s" using the "%s" database connection. (%s)',
-        //                $pendingRestore->backup,
-        //                $pendingRestore->connection,
-        //                $connectionInformationForConfirmation
-        //            ),
-        //            default: true
-        //        );
     }
 }
