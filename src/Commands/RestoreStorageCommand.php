@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Commands;
 
-use Illuminate\Support\Facades\Storage;
 use Laravel\Prompts\Prompt;
 use Wnx\LaravelBackupRestore\Actions\CleanupLocalBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
-use Wnx\LaravelBackupRestore\Actions\ImportDumpAction;
 use Wnx\LaravelBackupRestore\Actions\MoveFilesAction;
 use Wnx\LaravelBackupRestore\Actions\ResetStorageAction;
 use Wnx\LaravelBackupRestore\Exceptions\CannotCreateDbImporter;

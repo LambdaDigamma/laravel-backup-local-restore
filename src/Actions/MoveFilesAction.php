@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Wnx\LaravelBackupRestore\Actions;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Wnx\LaravelBackupRestore\PendingStorageRestore;
 
