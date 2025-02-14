@@ -10,7 +10,7 @@ use Wnx\LaravelBackupRestore\Events\DatabaseRestored;
 use Wnx\LaravelBackupRestore\Exceptions\CannotCreateDbImporter;
 use Wnx\LaravelBackupRestore\Exceptions\ImportFailed;
 use Wnx\LaravelBackupRestore\Exceptions\NoDatabaseDumpsFound;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\spin;
@@ -22,7 +22,7 @@ class ImportDumpAction
      * @throws CannotCreateDbImporter
      * @throws ImportFailed
      */
-    public function execute(PendingRestore $pendingRestore): void
+    public function execute(PendingDatabaseRestore $pendingRestore): void
     {
         $dbDumps = $pendingRestore->getAvailableDbDumps();
 

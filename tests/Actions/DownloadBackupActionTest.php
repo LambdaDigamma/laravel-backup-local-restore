@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Storage;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 test('it downloads backup from remote disk and stores it in local storage', function () {
     Storage::fake('local');
 
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-no-encryption.zip',
         connection: 'mysql',

@@ -8,12 +8,12 @@ use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
 use Wnx\LaravelBackupRestore\Actions\ImportDumpAction;
 use Wnx\LaravelBackupRestore\Events\DatabaseRestored;
 use Wnx\LaravelBackupRestore\Exceptions\NoDatabaseDumpsFound;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 it('imports mysql dump', function () {
     Event::fake();
 
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-no-encryption.zip',
         connection: 'mysql',
@@ -31,7 +31,7 @@ it('imports mysql dump', function () {
 });
 
 it('throws no database dumps found exception if backup does not contain any database dumps', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-03-11-no-dumps.zip',
         connection: 'mysql',

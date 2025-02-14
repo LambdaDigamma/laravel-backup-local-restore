@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use Wnx\LaravelBackupRestore\Actions\CleanupLocalBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 it('removes downloaded compressed and decompressed backup files', function () {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: 'Laravel/2023-01-28-mysql-no-compression-no-encryption.zip',
         connection: 'mysql',

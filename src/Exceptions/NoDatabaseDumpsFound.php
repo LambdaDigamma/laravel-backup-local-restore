@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Exceptions;
 
 use Exception;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 class NoDatabaseDumpsFound extends Exception
 {
-    public static function notFoundInBackup(PendingRestore $pendingRestore): self
+    public static function notFoundInBackup(PendingDatabaseRestore $pendingRestore): self
     {
 
         $files = $pendingRestore->getAvailableFilesInDbDumpsDirectory()->implode("\n");

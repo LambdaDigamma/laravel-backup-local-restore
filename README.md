@@ -111,12 +111,12 @@ You can add your own health checks by creating classes that extend `Wnx\LaravelB
 ```php
 namespace App\HealthChecks;
 
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 use Wnx\LaravelBackupRestore\HealthChecks\HealthCheck;
 
 class MyCustomHealthCheck extends HealthCheck
 {
-    public function run(PendingRestore $pendingRestore): Result
+    public function run(PendingDatabaseRestore $pendingRestore): Result
     {
         $result = Result::make($this);
 

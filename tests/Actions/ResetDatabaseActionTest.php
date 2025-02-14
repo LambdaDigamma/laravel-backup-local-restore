@@ -8,10 +8,10 @@ use Wnx\LaravelBackupRestore\Actions\DecompressBackupAction;
 use Wnx\LaravelBackupRestore\Actions\DownloadBackupAction;
 use Wnx\LaravelBackupRestore\Actions\ImportDumpAction;
 use Wnx\LaravelBackupRestore\Actions\ResetDatabaseAction;
-use Wnx\LaravelBackupRestore\PendingRestore;
+use Wnx\LaravelBackupRestore\PendingDatabaseRestore;
 
 it('resets database', function ($connection, $backup, $exceptionMessage) {
-    $pendingRestore = PendingRestore::make(
+    $pendingRestore = PendingDatabaseRestore::make(
         disk: 'remote',
         backup: $backup,
         connection: $connection,

@@ -6,7 +6,8 @@ namespace Wnx\LaravelBackupRestore;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Wnx\LaravelBackupRestore\Commands\RestoreCommand;
+use Wnx\LaravelBackupRestore\Commands\RestoreDatabaseCommand;
+use Wnx\LaravelBackupRestore\Commands\RestoreStorageCommand;
 
 class LaravelBackupRestoreServiceProvider extends PackageServiceProvider
 {
@@ -15,6 +16,7 @@ class LaravelBackupRestoreServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-backup-restore')
             ->hasConfigFile('backup-restore')
-            ->hasCommand(RestoreCommand::class);
+            ->hasCommand(RestoreDatabaseCommand::class)
+            ->hasCommand(RestoreStorageCommand::class);
     }
 }
