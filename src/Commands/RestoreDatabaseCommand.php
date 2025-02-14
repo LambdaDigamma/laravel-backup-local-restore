@@ -93,7 +93,7 @@ class RestoreDatabaseCommand extends BaseRestoreCommand
         return $this->runHealthChecks($pendingRestore);
     }
 
-    private function getDestinationDiskToRestoreFrom(): string
+    protected function getDestinationDiskToRestoreFrom(): string
     {
         if ($this->option('disk')) {
             return $this->option('disk');
@@ -112,7 +112,7 @@ class RestoreDatabaseCommand extends BaseRestoreCommand
         );
     }
 
-    private function getBackupToRestore(string $disk): string
+    protected function getBackupToRestore(string $disk): string
     {
         $name = config('backup.backup.name');
 
@@ -143,7 +143,7 @@ class RestoreDatabaseCommand extends BaseRestoreCommand
         );
     }
 
-    private function getPassword(): ?string
+    protected function getPassword(): ?string
     {
         if ($this->option('password')) {
             return $this->option('password');
