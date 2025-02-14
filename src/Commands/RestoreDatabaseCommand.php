@@ -175,4 +175,17 @@ class RestoreDatabaseCommand extends BaseRestoreCommand
 
         return self::SUCCESS;
     }
+
+    public function confirmRestoreProcess(PendingDatabaseRestore $pendingRestore): bool
+    {
+
+        return confirm(
+            label: sprintf(
+                'Proceed to restore disk "%s" using the "%s" disk from backup.',
+                'media',
+                'media'
+            ),
+            default: true
+        );
+    }
 }

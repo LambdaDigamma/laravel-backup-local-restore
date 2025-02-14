@@ -84,7 +84,7 @@ class RestoreStorageCommand extends BaseRestoreCommand
         return 0;
     }
 
-    private function confirmRestoreProcess(PendingStorageRestore $pendingRestore): bool
+    public function confirmRestoreProcess(PendingStorageRestore $pendingRestore): bool
     {
 
         return confirm(
