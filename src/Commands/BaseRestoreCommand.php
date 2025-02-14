@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Wnx\LaravelBackupRestore\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\Backup\Helpers\Format;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\Backup\Helpers\Format;
 use Wnx\LaravelBackupRestore\Exceptions\NoBackupsFound;
 
 use function Laravel\Prompts\confirm;
@@ -66,19 +66,19 @@ class BaseRestoreCommand extends Command
 
         $labelLength = 60;
 
-        foreach($listOfBackups as $key => $path) {
+        foreach ($listOfBackups as $key => $path) {
             $size = Format::humanReadableSize(Storage::disk($disk)->size($path));
             $labelLength = max($labelLength, strlen($path.$size) + 5);
             $listOfBackups[$key] = [
                 'path' => $path,
-                'size' => $size
+                'size' => $size,
             ];
         }
 
         return select(
             label: 'Which backup should be restored?',
             options: $listOfBackups->mapWithKeys(fn ($backup) => [
-                $backup['path'] => str_pad($backup['path'] . ' ', ($labelLength - strlen($backup['size'])), ".", STR_PAD_RIGHT).' '.$backup['size']
+                $backup['path'] => str_pad($backup['path'].' ', ($labelLength - strlen($backup['size'])), '.', STR_PAD_RIGHT).' '.$backup['size'],
             ]),
             default: $listOfBackups->last()['path'],
             scroll: 10

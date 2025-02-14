@@ -58,5 +58,4 @@ class PendingRestore
 
         return $root.DIRECTORY_SEPARATOR.'backup-restore-temp'.DIRECTORY_SEPARATOR.$filename;
     }
-
 }
